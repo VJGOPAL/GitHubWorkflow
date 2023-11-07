@@ -14,14 +14,18 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3  # Use the latest version of the checkout action.
 
-      - name: Build and Push Docker Image
-        run: |
-          # Build a Docker image from the repository using the Dockerfile.
-          docker build . -f Dockerfile -t myapp:1.2
-          #${{ github.run_number }}
-          
-           # Log in to Harbor using robot account credentials stored as GitHub secrets.
-          echo ${{ secrets.HARBOR_ROBOT_PASSWORD }} | docker login -u ${{ secrets.HARBOR_ROBOT_USERNAME }} --password-stdin harbor.maersk.io
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: harbor.maersk.io
+          username: ${{ secrets.HARBOR_ROBOT_USERNAME }}
+          password: ${{ secrets.HARBOR_ROBOT_PASSWORD }}
 
-          # Push the Docker image to Harbor.
-          docker push harbor.maersk.io/omnibase/testimage/myapp:latest    #${{ github.run_number }}]
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            harbor.maersk.io/omnibase/testimage/myapp:latest
+            harbor.maersk.io/omnibase/testimage/myapp:1.0.0 
