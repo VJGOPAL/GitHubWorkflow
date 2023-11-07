@@ -1,21 +1,26 @@
-name: BuildandDeployNodejsContainer
-
+name: Build and Deploy Node.js Container
 
 on:
   push:
-    branches:[master]
+    branches:
+      - master
   pull_request:
-    branches:[master]
-
+    branches:
+      - master
 
 jobs:
-  imagebuild:
+  build_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3  # Use the latest version of the checkout action.
 
-      - uses: actions/checkout@v3
-      - name: BuildAndPushImageOnHarbor
+      - name: Build and Push Docker Image
         run: |
-          docker build . --file Dockerfile --tag my-image-name:${{ github.run_number }}
-    
+          # Build a Docker image from the repository using the Dockerfile.
+          docker build . -f Dockerfile -t my-image-name:${{ github.run_number }}
+          
+   
+          # docker login -u USERNAME -p PASSWORD my-harbor-registry.example.com
+          # docker push my-harbor-registry.example.com/my-image-name:${{ github.run_number }}
