@@ -1,4 +1,4 @@
-name: Build and Deploy Node.js Container
+oname: Build and Deploy Node.js Container
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
           docker build . -f Dockerfile -t myapp:${{ github.run_number }}
           
            # Log in to Harbor using robot account credentials stored as GitHub secrets.
-          docker login -u ${{ secrets.HARBOR_ROBOT_USERNAME }} -p ${{ secrets.HARBOR_ROBOT_PASSWORD }}  harbor.maersk.io
+          echo ${{ secrets.HARBOR_ROBOT_PASSWORD }} | docker login -u ${{ secrets.HARBOR_ROBOT_USERNAME }} --password-stdin harbor.maersk.io
 
           # Push the Docker image to Harbor.
           docker push harbor.maersk.io/omnibase/testimage/[myapp:${{ github.run_number }}]
