@@ -25,7 +25,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          platforms: macos
           push: true
           tags: |
             harbor.maersk.io/omnibase/testimage/myapp:latest
