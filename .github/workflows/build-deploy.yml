@@ -23,4 +23,4 @@ jobs:
           docker login -u ${{ secrets.HARBOR_ROBOT_USERNAME }} -p ${{ secrets.HARBOR_ROBOT_PASSWORD }} harbor.maersk.io
 
           # Push the Docker image to Harbor.
-          docker push harbor.maersk.io/omnibase/Testimage/myapp:${{ github.run_number }}
+          docker push harbor.maersk.io/omnibase/testimage/myapp:${{ github.run_number }}
