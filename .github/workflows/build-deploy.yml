@@ -20,7 +20,7 @@ jobs:
           docker build . -f Dockerfile -t myapp:${{ github.run_number }}
           
            # Log in to Harbor using robot account credentials stored as GitHub secrets.
-          docker login -u ${{ secrets.HARBOR_ROBOT_USERNAME }} -p ${{ secrets.HARBOR_ROBOT_PASSWORD }} my-harbor-registry.example.com
+          docker login -u ${{ secrets.HARBOR_ROBOT_USERNAME }} -p ${{ secrets.HARBOR_ROBOT_PASSWORD }} harbor.maersk.io
 
           # Push the Docker image to Harbor.
           docker push harbor.maersk.io/omnibase/Testimage/myapp:${{ github.run_number }}
