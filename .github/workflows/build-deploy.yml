@@ -17,8 +17,10 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           # Build a Docker image from the repository using the Dockerfile.
-          docker build . -f Dockerfile -t my-image-name:${{ github.run_number }}
+          docker build . -f Dockerfile -t myapp:${{ github.run_number }}
           
-   
-          # docker login -u USERNAME -p PASSWORD my-harbor-registry.example.com
-          # docker push my-harbor-registry.example.com/my-image-name:${{ github.run_number }}
+           # Log in to Harbor using robot account credentials stored as GitHub secrets.
+          docker login -u ${{ HARBOR_ROBOT_USERNAME }} -p ${{ secrets.HARBOR_ROBOT_PASSWORD }} my-harbor-registry.example.com
+
+          # Push the Docker image to Harbor.
+          docker push harbor.maersk.io/omnibase/Testimage/myapp:${{ github.run_number }}
