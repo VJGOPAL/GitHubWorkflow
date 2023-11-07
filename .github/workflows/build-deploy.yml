@@ -1,4 +1,4 @@
-oname: Build and Deploy Node.js Container
+name: Build and Deploy Node.js Container
 
 on:
   push:
