@@ -5,3 +5,16 @@ on:
     branches:[master]
   pull_request:
     branches:[master]
+jobs:
+  imagebuild:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v3
+      - name: BuildAndPushImageOnHarbor
+        run: |
+          docker build ./ -t harbor.example.com/chaturmail/chaturmail-backend:${{ github.run_number }}
+          docker push harbor.example.com/chaturmail/chaturmail-backend:${{ github.run_number }}
+
+    
