@@ -54,7 +54,7 @@ jobs:
 
       - name: Tag Release (vX.Y.Z)
         run: |
-          git tag ${{ steps.tag_version_develop.outputs.version_tag }}
+          git tag ${{ steps.versioning.outputs.version_tag }}
           #git push origin ${{ steps.tag_version_develop.outputs.version_tag }}   
 
       - name: Docker meta
