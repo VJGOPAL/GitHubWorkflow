@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 env:
-  IMG_REGISTRY: harbor.maersk.io/omnibase/
+  IMG_REGISTRY: harbor.maersk.io/omnibase
   IMG_REPO: testimage/myapp
 
 jobs:
@@ -54,7 +54,7 @@ jobs:
         with:
           images: |
             #harbor.maersk.io/omnibase/testimage/myapp
-            ${{ IMG_REGISTRY }}  ${{ env.IMG_REPO }}
+            ${{ IMG_REGISTRY }}/${{ env.IMG_REPO }}
           tags: |
             # minimal
             type=match,pattern=\d.\d.\d
@@ -69,7 +69,8 @@ jobs:
           context: .
           push: false
           tags: |
-            ${{ steps.meta.outputs.tags }}
+            ${{ env.REPO }}:latest,${{ env.REPO }};${{ steps.versioning.output.version }}
+            #${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Create Release
@@ -81,4 +82,3 @@ jobs:
           tag_name: ${{ steps.versioning.outputs.version }}
           release_name: ${{ steps.versioning.outputs.version }}
           prerelease: true
-          
