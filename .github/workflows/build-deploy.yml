@@ -31,8 +31,8 @@ jobs:
         with:
           branches: main
           tag_prefix: v
-          major_pattern: BREAKING CHANGE:
-          minor_pattern: feat:
+          major_pattern: "BREAKING CHANGE:"
+          minor_pattern: "feat:"
           format: v${major}.${mminor}.$patch}-prereleases${increament}
           branch: HEAD
           use_branches: false
