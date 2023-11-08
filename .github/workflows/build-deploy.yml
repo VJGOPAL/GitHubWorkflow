@@ -64,6 +64,7 @@ jobs:
             # use custom value instead of git tag
             type=match,pattern=v(.*),group=1,value=v1.0.0
 
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
