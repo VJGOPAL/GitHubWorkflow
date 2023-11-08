@@ -61,7 +61,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           #context: .
-          push: false
+          push: true
           tags: |
             harbor.maersk.io/omnibase/testimage/myapp:latest
             harbor.maersk.io/omnibase/testimage/myapp:${{ steps.versioning.outputs.version_tag }}
