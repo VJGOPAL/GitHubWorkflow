@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 env:
   HARBOR_ROBOT_USERNAME: prod-harbor-robot@omnibase+write-omb-user
-  REPO: testimage/myapp
+  REPO: harbor.maersk.io/omnibase/testimage/myapp
   VERSION: 0
 
 jobs:
