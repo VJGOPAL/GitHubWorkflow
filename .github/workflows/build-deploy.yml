@@ -64,4 +64,4 @@ jobs:
           push: false
           tags: |
             harbor.maersk.io/omnibase/testimage/myapp:latest
-            harbor.maersk.io/omnibase/testimage/myapp: git tag ${{ steps.versioning.outputs.version_tag }}
+            harbor.maersk.io/omnibase/testimage/myapp:${{ steps.versioning.outputs.version_tag }}
