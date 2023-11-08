@@ -43,8 +43,6 @@ jobs:
         run: |
           git tag ${{ steps.meta.outputs.version_tag }}
           #git push origin ${{ steps.versioning.outputs.version_tag }}   
-ß    
-
       
       - name: Semantic versioning
         id: versioning
