@@ -5,14 +5,20 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+env:
+  HARBOR_ROBOT_USERNAME: prod-harbor-robot@omnibase+write-omb-user
+  REPO: harbor.maersk.io/omnibase/testimage/myapp
+  VERSION: 0
 
 jobs:
   build-and-push-image:                                     #There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     permissions:                                            #Sets the permissions granted to the GITHUB_TOKEN for the actions in this job.
       contents: read
       packages: write
+      issues: write
 
     steps:
       - name: Checkout Code
@@ -22,7 +28,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: harbor.maersk.io
-          username: ${{ secrets.HARBOR_ROBOT_USERNAME }}
+          username: ${{ env.HARBOR_ROBOT_USERNAME }}
           password: ${{ secrets.HARBOR_ROBOT_PASSWORD }}
 
       - name: Semantic versioning
@@ -32,7 +38,7 @@ jobs:
           #branches: main
           tag_prefix: v
           major_pattern: "BREAKING CHANGE:"
-          minor_pattern: "feat:"
+          minor_pattern: "feature:"
           #format: v${major}.${mminor}.$patch}-prereleases${increament}
           branch: HEAD
           use_branches: false
@@ -64,9 +70,10 @@ jobs:
           context: .
           push: false
           tags: |
-            ${{ env.REPO }}:latest,${{ env.REPO }};${{ steps.versioning.output.version }}
-            #${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+            #${{ env.REPO }}:latest,${{ env.REPO }};
+            #${{ steps.versioning.output.version }}
+            #${{ steps.meta.outputs.tags }}.${{ github.run_number }}
+          #labels: ${{ steps.meta.outputs.labels }}
 
       - name: Create Release
         if: ${{ !startswith(github.ref, 'refs/tags/') }}
