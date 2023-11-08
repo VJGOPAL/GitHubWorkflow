@@ -70,7 +70,8 @@ jobs:
           context: .
           push: false
           tags: |
-            ${{ env.REPO }}:latest,${{ env.REPO }};${{ steps.versioning.output.version }}
+            #${{ env.REPO }}:latest,${{ env.REPO }};
+            ${{ steps.versioning.output.version }}
             #${{ steps.meta.outputs.tags }}.${{ github.run_number }}
           labels: ${{ steps.meta.outputs.labels }}
 
