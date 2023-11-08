@@ -9,6 +9,7 @@ on:
 jobs:
   build-and-push-image:                                     #There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     permissions:                                            #Sets the permissions granted to the GITHUB_TOKEN for the actions in this job.
       contents: read
@@ -17,12 +18,15 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4                           # Use the latest version of the checkout action.
+        with:
+          /fetch all commits
+          fetch-depth: 0
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
           registry: harbor.maersk.io
-          username: ${{ secrets.HARBOR_ROBOT_USERNAME }}
+          username: ${{ env.HARBOR_ROBOT_USERNAME }}
           password: ${{ secrets.HARBOR_ROBOT_PASSWORD }}
 
       - name: Semantic versioning
@@ -32,7 +36,7 @@ jobs:
           #branches: main
           tag_prefix: v
           major_pattern: "BREAKING CHANGE:"
-          minor_pattern: "feat:"
+          minor_pattern: "feature:"
           #format: v${major}.${mminor}.$patch}-prereleases${increament}
           branch: HEAD
           use_branches: false
@@ -65,7 +69,7 @@ jobs:
           push: false
           tags: |
             ${{ env.REPO }}:latest,${{ env.REPO }};${{ steps.versioning.output.version }}
-            #${{ steps.meta.outputs.tags }}
+            #${{ steps.meta.outputs.tags }}.${{ github.run_number }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Create Release
