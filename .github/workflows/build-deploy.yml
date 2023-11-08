@@ -52,11 +52,6 @@ jobs:
           # If this is set to true, *every* commit will be treated as a new version.
           bump_each_commit: true
 
-      - name: Tag Release (vX.Y.Z)
-        run: |
-          git tag ${{ steps.versioning.outputs.version_tag }}
-          #git push origin ${{ steps.tag_version_develop.outputs.version_tag }}   
-
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
