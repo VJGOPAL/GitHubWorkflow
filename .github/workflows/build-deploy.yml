@@ -25,6 +25,16 @@ jobs:
           username: ${{ secrets.HARBOR_ROBOT_USERNAME }}
           password: ${{ secrets.HARBOR_ROBOT_PASSWORD }}
 
+      - name: Semantic versioning
+        id: versioning
+        uses: PaulHatch/semantic-version@4.0.2
+        with:
+          branches: "main"
+          tag_prefix: "v"
+          major_pattern: "BREAKING CHANGE:"
+          minor_pattern: "feat:"
+          format: "v${major}.${mminor}.$patch}-prereleases${increament}"
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
