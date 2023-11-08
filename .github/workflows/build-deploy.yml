@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  IMG_REGISTRY: harbor.maersk.io/omnibase/
+  IMG_REPO: testimage/myapp
+
 jobs:
   build-and-push-image:                                     #There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
     runs-on: ubuntu-latest
@@ -49,7 +53,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            harbor.maersk.io/omnibase/testimage/myapp
+            #harbor.maersk.io/omnibase/testimage/myapp
+            ${{ IMG_REGISTRY }}  ${{ env.IMG_REPO }}
           tags: |
             # minimal
             type=match,pattern=\d.\d.\d
@@ -62,7 +67,18 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: true
+          push: false
           tags: |
             ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }} 
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Create Release
+        if: ${{ !startswith(github.ref, 'refs/tags/') }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with: 
+          tag_name: ${{ steps.versioning.outputs.version }}
+          release_name: ${{ steps.versioning.outputs.version }}
+          prerelease: true
+          
