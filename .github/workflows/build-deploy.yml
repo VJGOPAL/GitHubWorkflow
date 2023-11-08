@@ -18,9 +18,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4                           # Use the latest version of the checkout action.
-        with:
-          /fetch all commits
-          fetch-depth: 0
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
