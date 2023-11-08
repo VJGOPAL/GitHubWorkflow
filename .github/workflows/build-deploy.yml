@@ -33,6 +33,19 @@ jobs:
           username: ${{ env.HARBOR_ROBOT_USERNAME }}
           password: ${{ secrets.HARBOR_ROBOT_PASSWORD }}
 
+      - name: Docker meta
+        uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: name/app
+
+      - name: Tag Release (vX.Y.Z)
+        run: |
+          git tag ${{ steps.meta.outputs.version_tag }}
+          #git push origin ${{ steps.versioning.outputs.version_tag }}   
+ß    
+
+      
       - name: Semantic versioning
         id: versioning
         uses: paulhatch/semantic-version@v5.3.0
@@ -56,7 +69,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           #context: .
-          push: true
+          push: false
           tags: |
             harbor.maersk.io/omnibase/testimage/myapp:latest
             harbor.maersk.io/omnibase/testimage/myapp:${{ steps.versioning.outputs.version_tag }}
