@@ -72,7 +72,7 @@ jobs:
           tags: |
             #${{ env.REPO }}:latest,${{ env.REPO }};
             #${{ steps.versioning.output.version }}
-            ${{ steps.meta.outputs.tags }}.${{ github.run_number }}
+            #${{ steps.meta.outputs.tags }}.${{ github.run_number }}
           #labels: ${{ steps.meta.outputs.labels }}
 
       - name: Create Release
