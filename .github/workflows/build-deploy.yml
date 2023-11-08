@@ -1,4 +1,4 @@
-name: Build and Deploy Node.js Container
+name: Build and Publish in GitHub Package Registry
 
 on:
   push:
@@ -7,19 +7,32 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build_and_deploy:
+  build-and-push-image:                                     #There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
     runs-on: ubuntu-latest
+
+    permissions:                                            #Sets the permissions granted to the GITHUB_TOKEN for the actions in this job.
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3  # Use the latest version of the checkout action.
+        uses: actions/checkout@v4                           # Use the latest version of the checkout action.
 
-      - name: Login to GitHub Container Registry
+      - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
           registry: harbor.maersk.io
           username: ${{ secrets.HARBOR_ROBOT_USERNAME }}
           password: ${{ secrets.HARBOR_ROBOT_PASSWORD }}
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            harbor.maersk.io/omnibase/testimage/myapp
+          tags: |
+            type=match,pattern=\d.\d.\d
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -27,5 +40,5 @@ jobs:
           context: .
           push: true
           tags: |
-            harbor.maersk.io/omnibase/testimage/myapp:latest
-            harbor.maersk.io/omnibase/testimage/myapp:1.0.0 
+            ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
