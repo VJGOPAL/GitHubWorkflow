@@ -1,0 +1,80 @@
+name: Build and Publish in GitHub Package Registry
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+env:
+  HARBOR_ROBOT_USERNAME: prod-harbor-robot@omnibase+write-omb-user
+  REPO: harbor.maersk.io/omnibase/testimage/myapp
+  VERSION: 0
+
+jobs:
+  build-and-push-image:                                     #There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:                                            #Sets the permissions granted to the GITHUB_TOKEN for the actions in this job.
+      contents: read
+      packages: write
+      issues: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4                           # Use the latest version of the checkout action.
+        with:
+          fetch-depth: 0
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: harbor.maersk.io
+          username: ${{ env.HARBOR_ROBOT_USERNAME }}
+          password: ${{ secrets.HARBOR_ROBOT_PASSWORD }}
+
+      - name: Semantic versioning
+        id: versioning
+        uses: paulhatch/semantic-version@v5.3.0
+        with:
+          # The prefix to use to identify tags
+          tag_prefix: "v"
+          # A string which, if present in a git commit, indicates that a change represents a
+          # major (breaking) change, supports regular expressions wrapped with '/'
+          major_pattern: "(MAJOR)"
+          # Same as above except indicating a minor change, supports regular expressions wrapped with '/'
+          minor_pattern: "(MINOR)"
+          # A string to determine the format of the version output
+          version_format: "${major}.${minor}.${patch}-prerelease${increment}"
+          # Optional path to check for changes. If any changes are detected in the path the
+          # 'changed' output will true. Enter multiple paths separated by spaces.
+          change_path: "."
+          # If this is set to true, *every* commit will be treated as a new version.
+          bump_each_commit: true
+
+      - name: Tag Release (vX.Y.Z)
+        run: |
+          git tag ${{ steps.versioning.outputs.version_tag }}
+          #git push origin ${{ steps.versioning.outputs.version_tag }}   
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          #context: .
+          push: true
+          tags: |
+            harbor.maersk.io/omnibase/testimage/myapp:latest
+            harbor.maersk.io/omnibase/testimage/myapp:${{ steps.versioning.outputs.version_tag }}
+
+    - name Create Releaseif: ${{ !startswith(github.ref, 'refs/tags') }}
+      uses: actions/create-release:v1
+      env:
+        GITHUB_TOKEN: ${{ secrts.GITHUB_TOKEN }}
+      with: 
+        tag_name: ${{ steps.versioning.outputs.version }}
+        release_name: ${{ steps.versioning.outputs.version }}
+        prerelease: true
+        
+
+harbor.maersk.io/omnibase/testimage/myapp:1.0.0 
+#https://docs.github.com/en/actions/publishing-packages/publishing-docker-images
