@@ -74,6 +74,6 @@ jobs:
           push: false
           tags: |
             harbor.maersk.io/omnibase/testimage/myapp:latest
-            harbor.maersk.io/omnibase/testimage/myapp:${{ steps.get_version.outputs.VERSION }}
+            harbor.maersk.io/omnibase/testimage/myapp:${{ steps.get_version.outputs.VERSION1 }}
 
     
