@@ -5,8 +5,8 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  #tags:
-  #  - 'v*'  
+    #tags:
+    #  - 'v*'  
 
 env:
   HARBOR_ROBOT_USERNAME: prod-harbor-robot@omnibase+write-omb-user
