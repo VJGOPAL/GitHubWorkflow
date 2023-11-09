@@ -21,8 +21,8 @@ jobs:
         run: 'echo "::set-output name=date::$(date +''%Y-%m-%d'')"'
       - name: Checkout branch "master"
         uses: actions/checkout@v4
-        with:
-          ref: master
+        #with:
+          #ref: master
       - name: Tag snapshot
         uses: tvdias/github-tagger@v0.0.1
         with:
