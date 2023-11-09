@@ -5,6 +5,9 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  tags:
+      - 'v*'
+
 env:
   HARBOR_ROBOT_USERNAME: prod-harbor-robot@omnibase+write-omb-user
   REPO: harbor.maersk.io/omnibase/testimage/myapp
@@ -48,10 +51,10 @@ jobs:
           tag-semver: |
             {{raw}}
           
-      - name: Tag Release (vX.Y.Z)
-        run: |
-          git tag ${{ steps.meta.outputs.tags }}
-          #echo ${{ steps.meta.outputs.labels }}
+      #- name: Tag Release (vX.Y.Z)
+      #  run: |
+      #    git tag ${{ steps.meta.outputs.tags }}
+      #    #echo ${{ steps.meta.outputs.labels }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
