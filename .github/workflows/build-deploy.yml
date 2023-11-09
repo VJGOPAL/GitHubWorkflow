@@ -39,22 +39,27 @@ jobs:
           username: ${{ env.HARBOR_ROBOT_USERNAME }}
           password: ${{ secrets.HARBOR_ROBOT_PASSWORD }}
      
-      - name: Extract metadata for the Docker image
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
+          images: ${{ env.REPO }}
+          tag-custom: latest
+          tag-semver: {{raw}}
+          
       - name: Tag Release (vX.Y.Z)
         run: |
-          echo ${{ steps.meta.outputs.tags }}
-          echo ${{ steps.meta.outputs.labels }}
+          git tag ${{ steps.meta.outputs.tags }}
+          #echo ${{ steps.meta.outputs.labels }}
 
-      #- name: Build and push
-      #  uses: docker/build-push-action@v5
-      #  with:
-      #    #context: .
-      #    push: false
-      #    tags: |
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          #context: .
+          push: false
+          tags: |
+            tags: ${{ steps.docker_meta.outputs.tags }}
+            labels: ${{ steps.docker_meta.outputs.labels }}
+
       #      harbor.maersk.io/omnibase/testimage/myapp:latest
       #      harbor.maersk.io/omnibase/testimage/myapp:${{ steps.versioning.outputs.version_tag }}
