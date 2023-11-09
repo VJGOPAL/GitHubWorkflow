@@ -24,11 +24,7 @@ jobs:
                 TAGS='["user/image:latest"]'
             fi
             echo '::set-output name=tags::'$TAGS
-  JobPush:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: build-and-push-image
-    steps:        
+
         - name: Build and Push Docker Image
           id: docker_build
           uses: docker/build-push-action@v2
@@ -40,6 +36,7 @@ jobs:
   display:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    needs: build-and-push-image
 
     steps:
         - name: print a value
