@@ -1,31 +1,39 @@
 name: CI test
-
 on:
   push:
-    branches: [ "tagver" ]
+    branches:
+      - tagver
   pull_request:
-    branches: [ "tagver" ]
-    #tags:
-    #  - 'v*'  
-
+    branches:
+      - tagver
 jobs:
-    build-and-push-image:                                     #There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
-        runs-on: ubuntu-latest
-        timeout-minutes: 15
-    
-        permissions:                                            #Sets the permissions granted to the GITHUB_TOKEN for the actions in this job.
-            contents: read
-            packages: write
-            issues: write
-    
-        steps:
-        - name: Create tag
-          uses: actions/github-script@v5
-          with:
-            script: |
-                github.rest.git.createRef({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    ref: 'refs/tags/',
-                    sha: context.sha
-                })
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+      issues: write
+    steps:
+      - name: Create tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: 'refs/tags/',
+                sha: context.sha
+            })
+      - name: Get current date
+        id: date
+        run: 'echo "::set-output name=date::$(date +''%Y-%m-%d'')"'
+      - name: Checkout branch "master"
+        uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Tag snapshot
+        uses: tvdias/github-tagger@v0.0.1
+        with:
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
+          tag: '${{ steps.date.outputs.date }}'
