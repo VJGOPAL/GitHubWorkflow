@@ -61,7 +61,7 @@ jobs:
           else
             TAGS='["user/image:latest"]'
           fi
-          echo '::set-output name=tags::'$TAGS
+          echo "{name}={tags::$TAGS }" >> $GITHUB_OUTPUT
           
       - name: Build and push
         id: docker_build
