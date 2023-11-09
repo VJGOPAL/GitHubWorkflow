@@ -1,11 +1,11 @@
 name: CI test
 on:
     push:
-         branches: [ "tagver" ]
-        pull_request:
-          branches: [ "tagver" ]
-            tags:
-            - 'v*'  
+      branches: [ "tagver" ]
+    pull_request:
+      branches: [ "tagver" ]
+    #tags:
+     #   - 'v*'  
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
