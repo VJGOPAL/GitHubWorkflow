@@ -44,10 +44,11 @@ jobs:
           username: ${{ env.HARBOR_ROBOT_USERNAME }}
           password: ${{ secrets.HARBOR_ROBOT_PASSWORD }}
       
-      - name: Echo
+      - name: Get the version
+        id: get_version
         run: |
-          echo ${{ GITHUB_REF##*/ }}
-          echo ${{ GITHUB_REF }}
+          echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+          echo "{VERSION1}={$(echo $GITHUB_REF | cut -d / -f 3)}" >> $GITHUB_OUTPUT
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -56,6 +57,6 @@ jobs:
           push: false
           tags: |
             harbor.maersk.io/omnibase/testimage/myapp:latest
-            harbor.maersk.io/omnibase/testimage/myapp:
+            harbor.maersk.io/omnibase/testimage/myapp:${{ steps.get_version.outputs.VERSION }}
 
     
