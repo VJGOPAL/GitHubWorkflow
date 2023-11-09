@@ -43,32 +43,24 @@ jobs:
           registry: harbor.maersk.io
           username: ${{ env.HARBOR_ROBOT_USERNAME }}
           password: ${{ secrets.HARBOR_ROBOT_PASSWORD }}
-     
-      - name: Docker meta
-        id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v1
-        with:
-          images: ${{ env.REPO }}
-          tag-custom: latest
-          tag-semver: |
-            {{raw}}
       
+      - name: Extract tag name
+        id: tag
+        uses: actions/github-script@0.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            return context.payload.ref.replace(/\/refs\/tags\//, '');
+      - name: Echo
+        run: echo ${{ steps.tag.outputs.result }}
+        
       - name: Build and push
-        id: gen_tags
-        run: |
-          if [[ $GITHUB_REF == 'refs/tags/'* ]]; then
-            TAGS='["user/image:latest","user/image:'${GITHUB_REF/refs\/tags\//}'"]'
-          else
-            TAGS='["user/image:latest"]'
-          fi
-          echo "{name}={tags::$TAGS }" >> $GITHUB_OUTPUT
-          
-      - name: Build and push
-        id: docker_build
         uses: docker/build-push-action@v5
         with:
-          context: .
-          push: true
-          tags: ${{ fromJson(steps.gen_tags.outputs.tags) }}
+          #context: .
+          push: false
+          tags: |
+            harbor.maersk.io/omnibase/testimage/myapp:latest
+            harbor.maersk.io/omnibase/testimage/myapp:
 
     
