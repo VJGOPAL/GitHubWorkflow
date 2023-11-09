@@ -71,5 +71,4 @@ jobs:
           push: true
           tags: ${{ fromJson(steps.gen_tags.outputs.tags) }}
 
-      #      harbor.maersk.io/omnibase/testimage/myapp:latest
-      #      harbor.maersk.io/omnibase/testimage/myapp:${{ steps.versioning.outputs.version_tag }}
+    
