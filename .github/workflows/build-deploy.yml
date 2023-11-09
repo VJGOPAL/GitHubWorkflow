@@ -4,11 +4,11 @@ on:
   push:
     branches: [ "main" ]
     tags:
-        - 'v*'
+      - 'v*' 
   pull_request:
     branches: [ "main" ]
     tags:
-        - 'v*'
+      - 'v*'  
 
 env:
   HARBOR_ROBOT_USERNAME: prod-harbor-robot@omnibase+write-omb-user
@@ -52,20 +52,25 @@ jobs:
           tag-custom: latest
           tag-semver: |
             {{raw}}
-          
-      #- name: Tag Release (vX.Y.Z)
-      #  run: |
-      #    git tag ${{ steps.meta.outputs.tags }}
-      #    #echo ${{ steps.meta.outputs.labels }}
-
+      
       - name: Build and push
+        id: gen_tags
+        run: |
+          if [[ $GITHUB_REF == 'refs/tags/'* ]]; then
+            TAGS='["user/image:latest","user/image:'${GITHUB_REF/refs\/tags\//}'"]'
+          else
+            TAGS='["user/image:latest"]'
+          fi
+          echo '::set-output name=tags::'$TAGS
+          
+      - name: Build and push
+        id: docker_build
         uses: docker/build-push-action@v5
+        needs: gen_tags
         with:
-          #context: .
-          push: false
-          tags: |
-            tags: ${{ steps.docker_meta.outputs.tags }}
-            labels: ${{ steps.docker_meta.outputs.labels }}
+          context: .
+          push: true
+          tags: ${{ fromJson(steps.gen_tags.outputs.tags) }}
 
       #      harbor.maersk.io/omnibase/testimage/myapp:latest
       #      harbor.maersk.io/omnibase/testimage/myapp:${{ steps.versioning.outputs.version_tag }}
