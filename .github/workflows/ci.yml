@@ -15,16 +15,7 @@ jobs:
       packages: write
       issues: write
     steps:
-      - name: Create tag
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.git.createRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: 'refs/tags/',
-                sha: context.sha
-            })
+
       - name: Get current date
         id: date
         run: 'echo "::set-output name=date::$(date +''%Y-%m-%d'')"'
