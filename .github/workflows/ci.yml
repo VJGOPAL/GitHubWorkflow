@@ -15,9 +15,6 @@ jobs:
       packages: write
       issues: write
     steps:
-
-      
-
         - name: Generate Docker Image Tags
           id: gen_tags
           run: |
@@ -27,13 +24,24 @@ jobs:
                 TAGS='["user/image:latest"]'
             fi
             echo '::set-output name=tags::'$TAGS
-        
+  JobPush:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: gen_tags
+    steps:        
         - name: Build and Push Docker Image
           id: docker_build
           uses: docker/build-push-action@v2
-          #needs: gen_tags
           with:
             context: .
             push: false
             tags: ${{ fromJson(steps.gen_tags.outputs.tags) }}
+        
+  display:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+        - name: print a value
+          run: echo Hello from another hob
         
