@@ -45,7 +45,8 @@ jobs:
         with:
           images: ${{ env.REPO }}
           tag-custom: latest
-          tag-semver: {{raw}}
+          tag-semver: |
+            {{raw}}
           
       - name: Tag Release (vX.Y.Z)
         run: |
