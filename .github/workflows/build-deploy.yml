@@ -53,8 +53,6 @@ jobs:
 
             
 
-
-
       #      harbor.maersk.io/omnibase/testimage/myapp:latest
-      #      harbor.maersk.io/omnibase/testimage/myapp: teest
+      #      harbor.maersk.io/omnibase/testimage/myapp:
       
